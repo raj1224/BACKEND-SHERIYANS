@@ -166,25 +166,53 @@
 // getmoresongs()
 
 // CALLBACK HELL       
-function connectToServer(cbfn) {
-    console.log(" connecting to server");
-    setTimeout(()=>{
-       cbfn();
-},2000)
-}
-function fetchCourses(cbfn) {
-    console.log("fetching courses");
-    setTimeout(()=>{
-        cbfn(["course 1","course 2","course 3"])
-    },2000);
+// function connectToServer(cbfn) {
+//     console.log(" connecting to server");
+//     setTimeout(()=>{
+//        cbfn();
+// },2000)
+// }
+// function fetchCourses(cbfn) {
+//     console.log("fetching courses");
+//     setTimeout(()=>{
+//         cbfn(["course 1","course 2","course 3"])
+//     },2000);
     
     
-}
-connectToServer(function () {
-    fetchCourses(function(data){
-        console.log(data);
+// }
+// connectToServer(function () {
+//     fetchCourses(function(data){
+//         console.log(data);
         
+//     })
+// })
+
+// PROMISES
+
+function connectToServer(){
+    console.log("connecting to server...");
+    return new Promise (function(resolve,reject){
+        setTimeout(() => {
+            resolve("connected... ")
+        }, 2000);
     })
+}
+function getCourse(){
+    console.log("getting courses...");
+    return new Promise (function(resolve,reject){
+        setTimeout(function(){
+            resolve(["course 1","course 2","course 3"])
+        },2000)
+    })   
+}
+connectToServer()
+.then(function(response){
+    console.log(response);
+    return getCourse()
+})
+.then(function(response){
+    console.log(response);
+    
 })
 
 // await to use krne ke liye async ke bina bhi chl skta h
