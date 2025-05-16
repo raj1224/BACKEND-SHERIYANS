@@ -3,6 +3,53 @@
 // function return
 // async js coding
 // foreach map filter find indexof
+// reference and pritives
+
+// PRIMITIVES AND REFERENCE
+// [] {} ()-reference
+// others - primitive
+
+//OPERATOR
+// var a = [1,2,3];
+// var b=a;
+// var b=[...a]; //spread operator
+// b.pop(); 
+
+// truthy and falsy values
+
+// falsy - 0 false undefined NaN null "" document.all 
+// truthy - others
+
+// || and && operator
+
+// 12 || 13 ->12
+// 0 || 13 -> 13
+
+// CONDITIONAL STATEMEN
+// if else else if
+// if (condition) { //condion->true or false
+    
+// }
+
+// TERNARY OPERATOR
+// 13>14 ? "yo":"yoyo";
+
+// FUNCTIONS
+
+// function name(params) {
+//     // function statements
+// }
+
+// function (){
+//     //anonymous functon
+// }
+// ()=>{
+//     // fat arrow function
+// }
+// a=>{
+//     // fat arrow function with one param
+// }
+// ()=>12; //fat arrow with implicit return 
 
 // FOREACH
 
@@ -11,6 +58,13 @@
 //     console.log(val+' hello');
     
 // })
+
+// FORIN
+// var obj = {name:"raj",age:21};
+// for (var val in obj) {
+//     console.log(val,obj[val]);
+    
+// }
 
 // MAP
 
@@ -94,6 +148,45 @@
 // var ans = abcd();
 // console.log(ans);
 
+// CALLBACKS
+// function getsongs() {
+//     setTimeout(() => {
+//         console.log("songs aa gye");
+        
+//     }, 2000);
+// }
+// function getmoresongs() {
+//     setTimeout(() => {
+//         console.log("more songs aa gye");
+        
+//     }, 1200);
+
+// }
+// getsongs()
+// getmoresongs()
+
+// CALLBACK HELL       
+function connectToServer(cbfn) {
+    console.log(" connecting to server");
+    setTimeout(()=>{
+       cbfn();
+},2000)
+}
+function fetchCourses(cbfn) {
+    console.log("fetching courses");
+    setTimeout(()=>{
+        cbfn(["course 1","course 2","course 3"])
+    },2000);
+    
+    
+}
+connectToServer(function () {
+    fetchCourses(function(data){
+        console.log(data);
+        
+    })
+})
+
 // await to use krne ke liye async ke bina bhi chl skta h
 
 // async js
@@ -107,4 +200,6 @@
     
 // }
 // abcd();
+
+
 
