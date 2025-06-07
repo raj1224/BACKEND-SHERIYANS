@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/miniproject')
+mongoose.connect('mongodb+srv://admin:cAfsMS2bif1EWSQa@cluster0.lp9n5.mongodb.net/miniproject')
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 

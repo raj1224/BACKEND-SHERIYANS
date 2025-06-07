@@ -11,22 +11,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-
+// register a new user
 app.get('/', (req, res) => {
   res.render('index');
 }
 );
-app.get('/login', (req, res) => {
-  res.render('login');
-}
-);
-app.get('/profile',isLoggenIn, async(req, res) => {
-  let user = await userModel.findOne({email:req.user.email});
-  console.log(user);
-  
-  res.render('profile',{user})
-  
-})
+
 app.post('/register', async(req, res) => {
     let {name,username,password,email,age} = req.body;
     let user = await userModel.findOne({email});
@@ -42,7 +32,7 @@ app.post('/register', async(req, res) => {
                 name,
                 password:hash,
             });
-            let token = jwt.sign({email:email,userid:user._id},"shhhh");
+            let token = jwt.sign({email:email,userid:user._id},"secretkey");
             res.cookie('token',token)
             res.send('registered successfully');
         })
@@ -50,6 +40,12 @@ app.post('/register', async(req, res) => {
   // res.render('index');
 }
 );
+// login the user account
+app.get('/login', (req, res) => {
+  res.render('login');
+}
+);
+
 app.post('/login', async(req, res) => {
     let {email,password} = req.body;
     let user = await userModel.findOne({email});
@@ -57,10 +53,12 @@ app.post('/login', async(req, res) => {
     if(!user) return res.status(500).send('Something went wrong');
 
     bcrypt.compare(password,user.password,(err,result)=>{
+      // result me true ya false aayega
         if(result) {
-          let token = jwt.sign({email:email,userid:user._id},"shhhh");
+          // res.status(200).send('Login successful');
+          let token = jwt.sign({email:email,userid:user._id},"secretkey");
            res.cookie('token',token);
-           res.status(200).redirect('/profile ');
+           res.status(200).redirect('/profile');
         }
         else res.redirect('/login');
     }
@@ -69,19 +67,71 @@ app.post('/login', async(req, res) => {
   // res.render('index');
 }
 );
+
+// logout the user account
 app.get('/logout',(req,res)=>{
   res.cookie('token','');
   res.redirect('/login');
 })
 
+// profile page of the user
+app.get('/profile',isLoggenIn, async(req, res) => {
+  // console.log(req.user);
+  // res.render('login')
+  
+  let user = await userModel.findOne({email:req.user.email}).populate('posts')
+  // console.log(user);
+
+  
+  res.render('profile',{user})
+  
+}) 
+
+// create a post
+app.post('/post',isLoggenIn, async(req, res) => {
+  let user = await userModel.findOne({email:req.user.email});
+  let {content}=req.body;
+  let post = await postModel.create({
+    userId:user._id,
+    content:content,
+  });
+  user.posts.push(post._id);
+  await user.save();
+  res.redirect('/profile');
+})
+
+// Like a post
+app.get('/like/:id',isLoggenIn, async(req, res) => {
+  let post = await postModel.findOne({_id:req.params.id}).populate('user');
+  if(post.likes.indexOf(req.user.userid) === -1) {
+    post.likes.push(req.user.userid);
+  }else{
+    post.likes.splice(post.likes.indexOf(req.user.userid), 1);
+  }
+
+  await post.save();
+  res.redirect('/profile');
+})
+// Edit a post
+app.get('/edit/:id',isLoggenIn, async(req, res) => {
+  let post = await postModel.findOne({_id:req.params.id}).populate('user');
+  res.render('edit',{post})
+})
+app.post('/update/:id',isLoggenIn, async(req, res) => {
+  let post = await postModel.findOneAndUpdate({_id:req.params.id},{content:req.body.content});
+  res.render('edit',{post})
+})
+
+
 function isLoggenIn(req, res, next) {
   // console.log(req.cookies);
   if(req.cookies.token==="")res.redirect("/login");
   else{
-    let data = jwt.verify(req.cookies.token,"shhhh")
+    let data = jwt.verify(req.cookies.token,"secretkey");
+    // to data me email and userid aayega
     req.user= data;
-    next();
   }
+  next();
 }
   
 
