@@ -5,12 +5,32 @@ const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const postModel = require('./models/post');
+const path = require('path');
+
+// const multer = require('multer');
+const crypto = require('crypto');
+
+const upload = require('./config/multerconfig');
+
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, './public/images/uploads');
+//   },
+//   filename:function (req, file, cb) {
+//     crypto.randomBytes(12, (err, bytes)=> {
+//       const fn = bytes.toString('hex')+path.extname(file.originalname);
+//       cb(null, fn);
+//     })
+//   }
+
+// })
+// const upload = multer({ storage: storage });
 
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
+app.use(express.static(path.join(__dirname, 'public')));
 // register a new user
 app.get('/', (req, res) => {
   res.render('index');
@@ -133,7 +153,35 @@ function isLoggenIn(req, res, next) {
   }
   next();
 }
+
+// Multer file upload
+
+// app.get('/test', (req, res) => {
+//   res.render('test');
+// }
+// );
+// app.post('/upload', upload.single('image'), (req, res) => {
+//   console.log(req.file);
+//   // res.send('File uploaded successfully');
+// }
+// );
   
+// require multer config
+app.get('/test', (req, res) => {
+  res.render('test');
+}
+);
+app.post('/upload',isLoggenIn, upload.single('image'), async(req, res) => {
+  let user = await userModel.findOne({email:req.user.email});
+  user.profilepic = req.file.filename;
+  await user.save();
+  res.redirect('/profile');
+  // console.log(req.file);
+  // res.send('File uploaded successfully');
+
+  // res.redirect('/test');
+}
+);
 
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
