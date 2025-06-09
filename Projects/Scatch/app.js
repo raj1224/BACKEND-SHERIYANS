@@ -11,7 +11,7 @@ const db = require('./config/mongoose-connection');
 // Importing the routers
 const ownersRouter = require('./routes/ownersRouter');
 const usersRouter = require('./routes/usersRouter');
-const productsRouter = require('./routes/productsRouter');
+const productsRouter = require('./routes/productsRouter.js'); 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
