@@ -12,14 +12,13 @@ const mongoose = require('mongoose');
 
 
 
-const userSchema =  mongoose.Schema({
+const userSchema = new mongoose.Schema({
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     cart: { type: Array, default: [] },
-    isAdmin: { type: Boolean, default: false },
     orders: { type: Array, default: [] },
-    contactNumber: { type: Number, required: true },
+    contactNumber: { type: Number},
     picture: { type: String, default: '' }
 
 });
