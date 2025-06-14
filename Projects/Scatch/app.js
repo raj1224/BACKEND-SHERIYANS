@@ -12,6 +12,23 @@ const db = require('./config/mongoose-connection');
 const ownersRouter = require('./routes/ownersRouter');
 const usersRouter = require('./routes/usersRouter');
 const productsRouter = require('./routes/productsRouter.js'); 
+const indexRouter = require('./routes/index');
+
+const expressSession = require('express-session');
+const flash = require('connect-flash');
+app.use(
+    expressSession({
+        resave:false,
+        saveUninitialized: false,
+        secret:process.env.EXPRESS_SESSION_SECRET ,
+    })
+)
+app.use(flash());
+
+// dotenv configuration
+require('dotenv').config();
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -24,10 +41,8 @@ app.use('/owners', ownersRouter);
 app.use('/users', usersRouter);
 app.use('/products', productsRouter);
 
-app.get('/', (req, res) => {
-    res.render('index');
-}
-);
+app.use('/', indexRouter);
+
 
 app.listen(3000, () => {
     console.log('Server is running on http://localhost:3000');
